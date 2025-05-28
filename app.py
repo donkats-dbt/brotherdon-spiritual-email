@@ -48,6 +48,30 @@ def unsubscribe():
 def landing():
     message = get_current_message() or pick_new_message()
     return render_template("landing.html", **message)
+from flask import request
+
+@app.route("/subscribe", methods=["GET", "POST"])
+def subscribe():
+    message = ""
+    if request.method == "POST":
+        name = request.form["name"].strip()
+        email = request.form["email"].strip().lower()
+
+        subscribers = []
+        if os.path.exists(SUBSCRIBERS):
+            with open(SUBSCRIBERS, "r") as f:
+                subscribers = json.load(f).get("subscribers", [])
+
+        if any(s["email"] == email for s in subscribers):
+            message = f"{email} is already subscribed."
+        else:
+            subscribers.append({"name": name, "email": email})
+            with open(SUBSCRIBERS, "w") as f:
+                json.dump({"subscribers": subscribers}, f, indent=2)
+            message = f"{email} added to the list."
+
+    return render_template("form_insert.html", message=message)
+    
 
 if __name__ == "__main__":
     app.run(debug=True)
