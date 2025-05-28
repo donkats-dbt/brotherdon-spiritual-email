@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daily Email Message Setup</title>
+    <style>
+        body { font-family: Arial; background-color: #f7f7f7; }
+        .container { max-width: 400px; margin: 40px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px #ccc; }
+        h2 { text-align: center; }
+        input[type="text"], input[type="email"] {
+            width: 100%; padding: 10px; margin: 10px 0;
+        }
+        .buttons { display: flex; justify-content: space-between; }
+        button { width: 48%; padding: 10px; }
+        .message { margin-top: 10px; color: green; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Daily Email Message Setup</h2>
+		<p style="font-size:18px; color:#888; margin-top:20px;">
+		   This will add you to our email list. Thanks for joining.<br><br>
+		</p>		
+        <form method="POST">
+            <label>Name:</label>
+            <input type="text" name="name" required>
+            <label>Email:</label>
+            <input type="email" name="email" required>
+
+            <div class="buttons">
+                <button name="action" value="add">Please Add Me</button>
+            </div>
+
+            {% if message %}
+            <div class="message">{{ message }}</div>
+            {% endif %}
+        </form>
+    </div>
+</body>
+</html>
