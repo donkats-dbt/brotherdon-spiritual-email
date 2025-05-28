@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Brother Don's Weekly Inspiration</title>
+  <style>
+    body { font-family: Arial; background-color: #f0fdf4; padding: 30px; }
+    .container { max-width: 600px; margin: auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .category { font-weight: bold; color: #2e8b57; font-size: 16px; }
+    .reference { font-style: italic; margin-bottom: 8px; }
+    .text { font-size: 17px; margin-bottom: 20px; }
+    .donate { background: #e6f5ea; border: 1px solid #2e8b57; padding: 15px; text-align: center; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Brother Don's Weekly Inspiration</h2>
+		<div class="message-block" style="margin: 30px 0;">
+		<div class="category" style="font-size: 22px; font-weight: bold; color: #2e8b57; margin-bottom: 10px;">
+		Theme: {{ category }}
+		</div>
+		<div class="reference" style="font-size: 22px; font-style: italic; color: #555;">
+		{{ reference }}
+		</div>
+		<div class="text" style="font-size: 22px; font-style: italic; color: #555;">
+		{{ text }}
+		</div>
+	</div>    
+	
+	<p style="font-size:18px; color:#888; margin-top:20px;">
+      This ministry is offered at <strong>no cost to you</strong>, made possible through faith, love, and the generous support of those who believe in the mission.<br><br>
+	</p>
+
+    <div class="donate">
+      <form action="https://www.paypal.com/donate" method="post" target="_blank">
+        <input type="hidden" name="hosted_button_id" value="5V7JZVFR6X6M2">
+        <label> Choose your donation amount:</label><br><br>
+        <select name="amount">
+          <option value="5.00">$5 – Encourage the Mission</option>
+          <option value="10.00">$10 – Support a Week</option>
+          <option value="25.00">$25 – Help Sustain the Platform</option>
+          <option value="50.00">$50 – Become a Donor Partner</option>
+        </select><br><br>
+        <input type="submit" value="Donate with PayPal">
+      </form>
+    </div>
+
+    <p style="font-size:12px; color:#888; margin-top:20px;">
+	  Brother Don is on a mission to continue spreading GOD’s word.<br><br>
+	  All scripture is from the King James Bible (KJV).<br><br>
+      Sent by BrotherDon@donkats.com
+
+    </p>
+  </div>
+</body>
+</html>
