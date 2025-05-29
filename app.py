@@ -1,18 +1,17 @@
 import os, json, random
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from utils.db import get_removal_emails, remove_marked_subscribers, subscriber_exists, add_subscriber
 
 app = Flask(__name__)
 
 CURRENT = "current_message.json"
 INVENTORY = "message_inventory.json"
-SUBSCRIBERS = "subscribers.json"
 
 def get_current_message():
     if os.path.exists(CURRENT):
         with open(CURRENT) as f:
             return json.load(f)
-    else:
-        return None
+    return None
 
 def pick_new_message():
     with open(INVENTORY) as f:
@@ -31,47 +30,35 @@ def reset():
 @app.route("/send")
 def send():
     message = get_current_message() or pick_new_message()
-    with open(SUBSCRIBERS) as f:
-        subs = json.load(f)["subscribers"]
-    log = [f"Sent to {s['name']} <{s['email']}>" for s in subs]
+
+    # Fetch subscribers from database
+    import mysql.connector
+    from utils.db import get_connection
+
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT name, email FROM subscribers")
+        subs = cursor.fetchall()
+
+    log = [f"Sent to {name} <{email}>" for name, email in subs]
     return "<br>".join(log)
 
 @app.route("/unsubscribe")
 def unsubscribe():
     email = request.args.get("email", "").lower()
-    subscribers = load_subscribers()
-    updated = [s for s in subscribers if s["email"] != email]
-    save_subscribers(updated)
-    return f"{email} has been unsubscribed."
+    if not email:
+        return "No email provided."
+
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO removals (email) VALUES (%s)", (email,))
+        conn.commit()
+    return f"{email} has been marked for removal."
 
 @app.route("/")
 def landing():
     message = get_current_message() or pick_new_message()
     return render_template("landing.html", **message)
-from flask import request
-
-@app.route("/subscribe", methods=["GET", "POST"])
-def subscribe():
-    message = ""
-    if request.method == "POST":
-        name = request.form["name"].strip()
-        email = request.form["email"].strip().lower()
-
-        subscribers = []
-        if os.path.exists(SUBSCRIBERS):
-            with open(SUBSCRIBERS, "r") as f:
-                subscribers = json.load(f).get("subscribers", [])
-
-        if any(s["email"] == email for s in subscribers):
-            message = f"{email} is already subscribed."
-        else:
-            subscribers.append({"name": name, "email": email})
-            with open(SUBSCRIBERS, "w") as f:
-                json.dump({"subscribers": subscribers}, f, indent=2)
-            message = f"{email} added to the list."
-
-    return render_template("form_insert.html", message=message)
-    
 
 if __name__ == "__main__":
     app.run(debug=True)

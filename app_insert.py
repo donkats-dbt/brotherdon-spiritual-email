@@ -1,45 +1,33 @@
 # app_insert.py
 
 from flask import Flask, render_template, request, redirect
-import json
-import os
+from utils.db import subscriber_exists, add_subscriber
 
 app = Flask(__name__)
-
-SUBSCRIBERS_FILE = "subscribers.json"
-
-def load_subscribers():
-    if os.path.exists(SUBSCRIBERS_FILE):
-        with open(SUBSCRIBERS_FILE, "r") as f:
-            data = json.load(f)
-            return data.get("subscribers", [])  # extracts the list
-    return []
-
-def save_subscribers(subscribers):
-    with open(SUBSCRIBERS_FILE, "w") as f:
-        json.dump({"subscribers": subscribers}, f, indent=2)  # writes back in same structure
-
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     message = ""
-    if request.method == "POST":
-        name = request.form["name"].strip()
-        email = request.form["email"].strip().lower()
-        action = request.form["action"]
 
-        subscribers = load_subscribers()
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        action = request.form.get("action")
 
         if action == "add":
-            if any(s["email"] == email for s in subscribers):
+            if subscriber_exists(email):
                 message = f"{email} is already subscribed."
             else:
-                subscribers.append({"name": name, "email": email})
-                save_subscribers(subscribers)
-                message = f"{email} added to the list."
+                try:
+                    add_subscriber(name, email)
+                    message = f"{email} added to the list."
+                except Exception as e:
+                    message = f"Error adding {email}: {e}"
 
-    return render_template("form_insert.html", message=message)
+        # Optional: redirect to avoid form resubmission on refresh
+        return render_template("insert_form.html", message=message)
+
+    return redirect("/", code=303)
 
 if __name__ == "__main__":
     app.run(debug=True)
-
