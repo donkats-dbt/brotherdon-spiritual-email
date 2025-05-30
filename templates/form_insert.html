@@ -4,21 +4,26 @@
     <title>Daily Email Message Setup</title>
     <style>
         body { font-family: Arial; background-color: #f7f7f7; }
-        .container { max-width: 400px; margin: 40px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px #ccc; }
-        h2 { text-align: center; }
-        input[type="text"], input[type="email"] {
-            width: 100%; padding: 10px; margin: 10px 0;
+        .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px #ccc; }
+ 
+		h2 { text-align: center; }
+        
+		input[type="text"], input[type="email"] {
+            width: 85%; padding: 10px; margin: 10px 0;
         }
-        .buttons { display: flex; justify-content: space-between; }
+        .buttons { display: flex; justify-content: center; }
         button { width: 48%; padding: 10px; }
         .message { margin-top: 10px; color: green; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Daily Email Message Setup</h2>
-		<p style="font-size:18px; color:#888; margin-top:20px;">
-		   This will add you to our email list. Thanks for joining.<br><br>
+        <h2>Daily Email Message Request</h2>
+		<p style="font-size:12px; color:#3342c4; margin-top:20px;">
+			Why Daily Spiritual and Inspirational Messages Matter<br><br>
+			In a world filled with uncertainty, noise, and distraction, the soul needs daily nourishment just as the body needs daily bread. A timely word of hope, a verse of Scripture, or a message of encouragement can lift the weary, strengthen the discouraged, and realign our hearts with God’s truth and love. <br><br>
+			This ministry is offered at no cost to you without subscriptions fees, or strings attached made possible through faith, love, and the generous support of those who believe in the mission. Brother Don recently diagnosed with Idiopathic Pulmonary Fibrosis and is on a mission to continue spreading GOD’s word. <br><br>
+			These messages are more than words, they are reminders that you are not alone, that God is with you, and that each day is a new chance to walk in faith, peace, and purpose. <br><br>
 		</p>		
         <form method="POST">
             <label>Name:</label>
@@ -29,6 +34,13 @@
             <div class="buttons">
                 <button name="action" value="add">Please Add Me</button>
             </div>
+
+		<p style="font-size:12px; color:#3342c4; margin-top:20px;">
+			Every week, subscribers receive a powerful message from the King James Version (KJV) Bible hand-selected to inspire, comfort, and equip you for the days ahead. <br><br>
+			Brother Don has his Th.D. and is a lifelong student of theology and biblical scripture. Don is inspired to use his knowledge to help all people understand Jesus’s message of salvation.<br><br> 
+			Understanding JESUS’s promise of salvation and gift of eternal life is needed in this day and age. Two recently published books by Brother Don (Donald Sallot) on Amazon are JESUS’S PROMISE OF SALVATION: Are You Ready?, Meet Helen: A Different Perspective. <br><br>
+			With all of life challenges it’s good to know that Jesus alone has answers to life problems. <br><br>
+		</p>		
 
             {% if message %}
             <div class="message">{{ message }}</div>
