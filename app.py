@@ -12,7 +12,7 @@ def get_current_message():
         if row:
             return {"category": row[0], "reference": row[1], "class": row[2]}
         return None
-
+ 
 def pick_new_message():
     with get_connection() as conn:
         cursor = conn.cursor()
