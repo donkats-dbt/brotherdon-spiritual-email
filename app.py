@@ -1,59 +1,57 @@
-import os, json, random
+import os, random
 from flask import Flask, render_template, request
-from utils.db import get_removal_emails, remove_marked_subscribers, subscriber_exists, add_subscriber
+from utils.db import get_connection, get_removal_emails, remove_marked_subscribers, subscriber_exists, add_subscriber
 
 app = Flask(__name__)
 
-CURRENT = "current_message.json"
-INVENTORY = "message_inventory.json"
-
 def get_current_message():
-    if os.path.exists(CURRENT):
-        with open(CURRENT) as f:
-            return json.load(f)
-    return None
-    
-@app.route("/subscriber", methods=["GET", "POST"])
-def subscriber_form():
-    message = ""
-    if request.method == "POST":
-        name = request.form.get("name")
-        email = request.form.get("email")
-        try:
-            add_subscriber(name, email)
-            message = "✅ Subscriber added successfully!"
-        except Exception as e:
-            message = f"❌ Could not add subscriber: {str(e)}"
-    return render_template("form_insert.html", message=message)
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT category, reference, class FROM current_message ORDER BY id DESC LIMIT 1")
+        row = cursor.fetchone()
+        if row:
+            return {"category": row[0], "reference": row[1], "class": row[2]}
+        return None
 
 def pick_new_message():
-    with open(INVENTORY) as f:
-        messages = json.load(f)["messages"]
-    selected = random.choice(messages)
-    with open(CURRENT, "w") as f:
-        json.dump(selected, f, indent=2)
-    return selected
+    with get_connection() as conn:
+        cursor = conn.cursor()
+
+        # Pick a random message from inventory
+        cursor.execute("SELECT id, category, reference, class FROM message_inventory")
+        messages = cursor.fetchall()
+        if not messages:
+            return {"category": "No messages", "reference": "No message inventory available.", "class": ""}
+
+        selected = random.choice(messages)
+        category, reference, msg_class = selected[1], selected[2], selected[3]
+
+        # Save to current_message
+        cursor.execute("""
+            INSERT INTO current_message (category, reference, class)
+            VALUES (?, ?, ?)
+        """, (category, reference, msg_class))
+        conn.commit()
+        return {"category": category, "reference": reference, "class": msg_class}
 
 @app.route("/reset")
 def reset():
-    if os.path.exists(CURRENT):
-        os.remove(CURRENT)
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM current_message")
+        conn.commit()
     return "Current message cleared."
 
 @app.route("/send")
 def send():
     message = get_current_message() or pick_new_message()
 
-    # Fetch subscribers from database
-    import mysql.connector
-    from utils.db import get_connection
-
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT name, email FROM subscribers")
         subs = cursor.fetchall()
 
-    log = [f"Sent to {name} <{email}>" for name, email in subs]
+    log = [f"Sent to {name} <{email}> — {message['category']}" for name, email in subs]
     return "<br>".join(log)
 
 @app.route("/unsubscribe")
@@ -64,27 +62,9 @@ def unsubscribe():
 
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO removals (email) VALUES (%s)", (email,))
+        cursor.execute("INSERT INTO removals (email) VALUES (?)", (email,))
         conn.commit()
     return f"{email} has been marked for removal."
-
-from utils.db import get_connection
-
-@app.route("/admin_subscribers")
-def admin_subscribers():
-    with get_connection() as conn:
-        c = conn.cursor()
-        c.execute("SELECT id, name, email FROM subscribers ORDER BY id DESC")
-        rows = c.fetchall()
-    return render_template("admin_subscribers.html", subscribers=rows)
-
-@app.route("/admin_messages")
-def admin_messages():
-    with get_connection() as conn:
-        c = conn.cursor()
-        c.execute("SELECT id,  category, reference, class FROM message_inventory ORDER BY category, reference DESC")
-        rows = c.fetchall()
-    return render_template("admin_messages.html", messages=rows)
 
 @app.route("/")
 def landing():
