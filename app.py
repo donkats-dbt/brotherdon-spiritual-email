@@ -70,7 +70,7 @@ def unsubscribe():
 
 from utils.db import get_connection
 
-@app.route("/admin/subscribers")
+@app.route("/admin_subscribers")
 def admin_subscribers():
     with get_connection() as conn:
         c = conn.cursor()
@@ -78,7 +78,7 @@ def admin_subscribers():
         rows = c.fetchall()
     return render_template("admin_subscribers.html", subscribers=rows)
 
-@app.route("/admin/messages")
+@app.route("/admin_messages")
 def admin_messages():
     with get_connection() as conn:
         c = conn.cursor()
