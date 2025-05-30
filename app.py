@@ -12,6 +12,19 @@ def get_current_message():
         with open(CURRENT) as f:
             return json.load(f)
     return None
+    
+@app.route("/subscriber", methods=["GET", "POST"])
+def subscriber_form():
+    message = ""
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        try:
+            add_subscriber(name, email)
+            message = "✅ Subscriber added successfully!"
+        except Exception as e:
+            message = f"❌ Could not add subscriber: {str(e)}"
+    return render_template("form_insert.html", message=message)
 
 def pick_new_message():
     with open(INVENTORY) as f:
