@@ -122,7 +122,7 @@ def reset():
         cursor.execute("DELETE FROM current_message")
         conn.commit()
     return "Current message cleared."
- 
+
 @app.route("/send")
 def send():
     message = get_current_message() or pick_new_message()
@@ -169,6 +169,22 @@ def subscriber():
             message = f"{email} is already subscribed."
 
     return render_template("form_insert.html", message=message)
+    
+@app.route("/admin/subscribers")
+def admin_subscribers():
+    with get_connection() as conn:
+        c = conn.cursor()
+        c.execute("SELECT id, name, email FROM subscribers ORDER BY email DESC")
+        rows = c.fetchall()
+    return render_template("admin_subscribers.html", subscribers=rows)
+
+@app.route("/admin/messages")
+def admin_messages():
+    with get_connection() as conn:
+        c = conn.cursor()
+        c.execute("SELECT id, category, reference, class FROM message_inventory ORDER BY category, reference DESC")
+        rows = c.fetchall()
+    return render_template("admin_messages.html", messages=rows)
 
 if __name__ == "__main__":
     app.run(debug=True)
