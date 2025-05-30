@@ -17,21 +17,20 @@ def pick_new_message():
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        # Pick a random message from inventory
         cursor.execute("SELECT id, category, reference, class FROM message_inventory")
         messages = cursor.fetchall()
         if not messages:
             return {"category": "No messages", "reference": "No message inventory available.", "class": ""}
 
         selected = random.choice(messages)
-        category, reference, msg_class = selected[1], selected[2], selected[3]
+        msg_id, category, reference, msg_class = selected
 
-        # Save to current_message
         cursor.execute("""
-            INSERT INTO current_message (category, reference, class)
-            VALUES (?, ?, ?)
-        """, (category, reference, msg_class))
+            INSERT INTO current_message (id, category, reference, class)
+            VALUES (?, ?, ?, ?)
+        """, (msg_id, category, reference, msg_class))
         conn.commit()
+
         return {"category": category, "reference": reference, "class": msg_class}
 
 @app.route("/reset")
