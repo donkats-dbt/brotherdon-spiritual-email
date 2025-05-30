@@ -1,6 +1,6 @@
 # utils/db.py
 
-import mysql.connector
+import pymysql
 import os
 from dotenv import load_dotenv
 
