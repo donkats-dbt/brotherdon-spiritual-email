@@ -122,7 +122,7 @@ def reset():
         cursor.execute("DELETE FROM current_message")
         conn.commit()
     return "Current message cleared."
-
+ 
 @app.route("/send")
 def send():
     message = get_current_message() or pick_new_message()
