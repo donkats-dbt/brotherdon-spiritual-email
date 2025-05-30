@@ -82,7 +82,7 @@ def admin_subscribers():
 def admin_messages():
     with get_connection() as conn:
         c = conn.cursor()
-        c.execute("SELECT id, subject, body, created_at FROM message_inventory ORDER BY created_at DESC")
+        c.execute("SELECT id,  reference, body, class, created_at FROM message_inventory ORDER BY created_at DESC")
         rows = c.fetchall()
     return render_template("admin_messages.html", messages=rows)
 
