@@ -17,14 +17,19 @@ def pick_new_message():
     with get_connection() as conn:
         cursor = conn.cursor()
 
+        # Select all messages from inventory
         cursor.execute("SELECT id, category, reference, class FROM message_inventory")
         messages = cursor.fetchall()
-        if not messages:
-            return {"category": "No messages", "reference": "No message inventory available.", "class": ""}
 
+        if not messages:
+            return {"category": "No messages", "reference": "No inventory available.", "class": ""}
+
+        # Pick one randomly
         selected = random.choice(messages)
         msg_id, category, reference, msg_class = selected
 
+        # Overwrite current_message (ensure one row only)
+        cursor.execute("DELETE FROM current_message")
         cursor.execute("""
             INSERT INTO current_message (id, category, reference, class)
             VALUES (?, ?, ?, ?)
