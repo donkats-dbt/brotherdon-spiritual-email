@@ -1,3 +1,5 @@
 flask
+fpdf 
+gunicorn
 pymysql
 python-dotenv
