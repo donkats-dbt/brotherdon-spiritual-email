@@ -2,15 +2,29 @@
 <html>
 <head>
     <title>Admin - Subscribers</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ccc; padding: 8px; }
+        th { background-color: #f9f9f9; }
+    </style>
 </head>
 <body>
     <h2>Current Subscribers</h2>
     {% if subscribers %}
-        <ul>
-        {% for sub in subscribers %}
-            <li>{{ sub[0] }} - {{ sub[1] }} - {{ sub[2] }}</li>
-        {% endfor %}
-        </ul>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+            {% for sub in subscribers %}
+            <tr>
+                <td>{{ sub[0] }}</td>
+                <td>{{ sub[1] }}</td>
+                <td>{{ sub[2] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
     {% else %}
         <p>No subscribers found.</p>
     {% endif %}
