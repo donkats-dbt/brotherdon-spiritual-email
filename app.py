@@ -12,7 +12,7 @@ def get_current_message():
         if row:
             return {"category": row[0], "reference": row[1], "class": row[2]}
         return None
- 
+
 def pick_new_message():
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -170,7 +170,7 @@ def subscriber():
 
     return render_template("form_insert.html", message=message)
     
-@app.route("/subscribers")
+@app.route("/admin/subscribers")
 def admin_subscribers():
     with get_connection() as conn:
         c = conn.cursor()
@@ -178,7 +178,7 @@ def admin_subscribers():
         rows = c.fetchall()
     return render_template("admin_subscribers.html", subscribers=rows)
 
-@app.route("/messages")
+@app.route("/admin/messages")
 def admin_messages():
     with get_connection() as conn:
         c = conn.cursor()
