@@ -178,14 +178,6 @@ def admin_subscribers():
         rows = c.fetchall()
     return render_template("admin_subscribers.html", subscribers=rows)
 
-@app.route("/subscribers")
-def admin_subscribers():
-    with get_connection() as conn:
-        c = conn.cursor()
-        c.execute("SELECT id, name, email FROM current_subscribers ORDER BY email DESC")
-        rows = c.fetchall()
-    return render_template("admin_subscribers_current.html", subscribers=rows)
-
 @app.route("/messages")
 def admin_messages():
     with get_connection() as conn:
