@@ -170,7 +170,7 @@ def subscriber():
 
     return render_template("form_insert.html", message=message)
     
-@app.route("/admin/subscribers")
+@app.route("/subscribers")
 def admin_subscribers():
     with get_connection() as conn:
         c = conn.cursor()
@@ -178,7 +178,7 @@ def admin_subscribers():
         rows = c.fetchall()
     return render_template("admin_subscribers.html", subscribers=rows)
 
-@app.route("/admin/messages")
+@app.route("/messages")
 def admin_messages():
     with get_connection() as conn:
         c = conn.cursor()
